@@ -4,60 +4,71 @@ import './App.css';
 import foods from './foods.json';
 import FoodBox from './components/FoodBox';
 import AddFood from './components/AddFood';
+import SearchFood from './components/SearchFood';
 
 
 class App extends Component {
   state = {
 
     foodArray : foods,
-    showForm : true
+    filteredArray : foods ,
+    showForm : true,
+    textbutton : "Show form"
 
   }
 
   toggleForm = () => {
     this.setState({ showForm: !this.state.showForm });
+    if (this.state.showForm) this.setState({ textbutton : "Show Form"}) ;
+    else this.setState({ textbutton :  "Hide Form"}); 
+  }
+ 
+
+  addFood = (foodObj) => {
+    const foodUpdated= [foodObj,...this.state.foodArray];
+
+    this.setState({ foodArray : foodUpdated , filteredArray  : foodUpdated });
+   
   }
 
+  searchFood = (foodName) => {
+      
 
-  // addFood = () => {
-  //   const foodUpdated= [foodObj,...this.state.foodArray];
-
-  //   this.setState({ foodArray : foodUpdated });
-  //   // const moviesUpdated= [movieObj,...this.state.movies];// merge movie object with array movies
-
-  //   // this.setState({movies : moviesUpdated});
-  // }
+       const result = this.state.foodArray.filter(meal => meal.name.toLowerCase().includes(foodName.name.toLowerCase()));
+        console.log("result",result);
+        console.log("palabra a vbuscar",foodName.name);
+       
+       this.setState({ filteredArray  : result});
+   }
 
   render() {
     return (
 
       <div className="App">
 
-        {/* <AddFood  AddOneFood={this.addFood} /> */}
-        <button onClick={this.toggleForm}>Show form</button>
+       
+        <button onClick={this.toggleForm}>
+        {this.state.textbutton}
+
+        </button>
 
         { this.state.showForm ?
-          <AddFood  /> 
+          <AddFood AddOneFood={this.addFood} /> 
           :
           null
         }
-        
+
+          <SearchFood searchforFoods={this.searchFood}/>
        
-      {/* <FoodBox foodName={foods[0].name} foodCalories={foods[0].calories} foodImages={foods[0].image}/> */}
-
-      {/* { foods.map(( oneFood) => {
-        return <FoodBox foodName={oneFood.name} foodCalories={oneFood.calories} foodImages={oneFood.image}/>
-      })} */}
-
-      { this.state.foodArray.map(( oneFood,index) => {
+       
+     
+      <div className="listContainer">
+      { this.state.filteredArray.map(( oneFood,index) => {
         return <FoodBox key={index} food={oneFood}/>
       })}
-      {/* this.state.movies.map( (oneMovie, index) => {
-            return <ImprovedCard key={index} {...oneMovie} clickToDelete={ ()=> this.deleteMovie(index)} />
-          }) */}
-
-
-     
+      
+      </div>
+      
 
       </div>
     );
